@@ -157,6 +157,26 @@ B+ 树是模板类 `BPlusTree<KeyType, ValueType, KeyComparator>`，在本项目
 
 > **注意：** 当前迭代器设计中没有 `BufferPoolManager*` 成员，这意味着迭代器无法通过 BPM 获取页面。如果你需要跨叶节点遍历，你需要修改迭代器头文件添加必要的成员变量。
 
+## 3.1 学生实现范围
+
+学生应主要完成以下 B+ 树相关文件：
+
+- `src/storage/page/b_plus_tree_internal_page.cpp`
+  完成页内查找、插入/删除、分裂辅助、重分配辅助等内部节点操作。
+- `src/storage/page/b_plus_tree_leaf_page.cpp`
+  完成有序插入/删除、精确查找、分裂辅助、合并辅助以及叶子间移动。
+- `src/storage/index/b_plus_tree.cpp`
+  完成 `Insert`、`Remove`、`GetValue`、`Begin()`、`Begin(key)`，包括建根、向上分裂传播、合并/重分配和根节点调整。
+- `src/storage/index/b_plus_tree_iterator.cpp`
+  完成迭代器解引用和递增，使叶子节点能按 key 顺序遍历。
+
+Lab 2 完成后，学生应能够：
+
+- 维护内部页和叶子页中的有序 key，
+- 在结构变化时保持父指针和叶子链表正确，
+- 处理根节点分裂和根节点收缩，
+- 支持点查、插入/删除重平衡以及顺序迭代。
+
 ## 4. 实现说明
 
 - 维护页面头部字段、节点大小和父节点指针的一致性。

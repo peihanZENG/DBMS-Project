@@ -259,10 +259,24 @@ GRADED_TEST_F(LargeSqlExecutorEvalTest, LargeDataRobustness, 10) {
   for (const auto &row : grouped.GetRows()) {
     bucket_counts[std::stoi(row[0])] = std::stoi(row[1]);
   }
-  EXPECT_EQ(bucket_counts[0], 3);
-  EXPECT_EQ(bucket_counts[1], 3);
-  EXPECT_EQ(bucket_counts[2], 3);
-  EXPECT_EQ(bucket_counts[3], 3);
+
+  std::unordered_map<int, int> expected_bucket_counts;
+  int expected_total = 0;
+  for (int i = 0; i < kFactRows; ++i) {
+    int id = i % kKeyCardinality;
+    int bucket = i % kBucketCardinality;
+    if (id < 80) {
+      expected_bucket_counts[bucket]++;
+      expected_total++;
+    }
+  }
+
+  int actual_total = 0;
+  for (int bucket = 0; bucket < kBucketCardinality; ++bucket) {
+    EXPECT_EQ(bucket_counts[bucket], expected_bucket_counts[bucket]);
+    actual_total += bucket_counts[bucket];
+  }
+  EXPECT_EQ(actual_total, expected_total);
 }
 
 GRADED_TEST_F(LargeSqlExecutorEvalTest, IndexedLookupsMustNotBeSlow, 10) {

@@ -23,17 +23,23 @@ class SeqScanPlanNode : public AbstractPlanNode {
 
 class IndexScanPlanNode : public AbstractPlanNode {
  public:
-  IndexScanPlanNode(Schema output_schema, table_oid_t table_oid, index_oid_t index_oid)
+  IndexScanPlanNode(Schema output_schema, table_oid_t table_oid, index_oid_t index_oid,
+                    AbstractExpressionRef lookup_key, AbstractExpressionRef predicate = nullptr)
       : AbstractPlanNode(std::move(output_schema), {}),
-        table_oid_(table_oid), index_oid_(index_oid) {}
+        table_oid_(table_oid), index_oid_(index_oid), lookup_key_(std::move(lookup_key)),
+        predicate_(std::move(predicate)) {}
 
   auto GetType() const -> PlanType override { return PlanType::INDEX_SCAN; }
   auto GetTableOid() const -> table_oid_t { return table_oid_; }
   auto GetIndexOid() const -> index_oid_t { return index_oid_; }
+  auto GetLookupKey() const -> const AbstractExpressionRef & { return lookup_key_; }
+  auto GetPredicate() const -> const AbstractExpressionRef & { return predicate_; }
 
  private:
   table_oid_t table_oid_;
   index_oid_t index_oid_;
+  AbstractExpressionRef lookup_key_;
+  AbstractExpressionRef predicate_;
 };
 
 class InsertPlanNode : public AbstractPlanNode {

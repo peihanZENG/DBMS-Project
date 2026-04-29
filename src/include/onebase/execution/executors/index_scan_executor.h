@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "onebase/execution/executors/abstract_executor.h"
 #include "onebase/execution/plans/plan_nodes.h"
 
@@ -13,6 +14,10 @@ class IndexScanExecutor : public AbstractExecutor {
 
  private:
   const IndexScanPlanNode *plan_;
+  TableInfo *table_info_{nullptr};
+  IndexInfo *index_info_{nullptr};
+  std::vector<RID> matching_rids_;
+  size_t cursor_{0};
 };
 
 }  // namespace onebase

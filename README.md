@@ -53,6 +53,80 @@ OneBase is a lightweight relational database system designed for teaching the in
               └──────────────────────┘
 ```
 
+```mermaid
+flowchart TB
+  A[OneBase DBMS] --> B[Common]
+  A --> C[Buffer]
+  A --> D[Storage]
+  A --> E[Execution]
+  A --> F[Concurrency]
+  A --> G[Catalog]
+  A --> H[Binder]
+  A --> I[Optimizer]
+  A --> J[Type]
+  A --> K[Client / Server / Tools]
+
+  B --> B1[config / rid / utilities]
+  C --> C1[BufferPoolManager]
+  C --> C2[PageGuard]
+  C --> C3[LRU-K Replacer]
+  D --> D1[B+ Tree Index]
+  D --> D2[TableHeap]
+  D --> D3[Disk Manager]
+  D --> D4[Page Structures]
+  E --> E1[Executors]
+  E --> E2[Execution Engine]
+  F --> F1[Lock Manager]
+  F --> F2[Transaction Manager]
+  G --> G1[Schema / Table / Index Metadata]
+  H --> H1[SQL Binder]
+  I --> I1[Query Optimizer]
+  J --> J1[Value / Type System]
+  K --> K1[onebase_client]
+  K --> K2[onebase_server]
+  K --> K3[tools]
+
+  C --> D
+  D --> E
+  G --> H
+  H --> I
+  F --> E
+  J --> G
+  J --> E
+```
+
+```mermaid
+flowchart LR
+  L1[Lab 1\nBuffer Pool] --> L1a[buffer_pool_manager]
+  L1 --> L1b[lru_k_replacer]
+  L1 --> L1c[page_guard]
+
+  L2[Lab 2\nB+ Tree Index] --> L2a[b_plus_tree]
+  L2 --> L2b[b_plus_tree_internal_page]
+  L2 --> L2c[b_plus_tree_leaf_page]
+  L2 --> L2d[b_plus_tree_iterator]
+  L2 --> L2e[table_heap]
+  L2 --> L2f[disk_manager]
+  L2 --> L2g[page structures]
+
+  L3[Lab 3\nQuery Execution] --> L3a[abstract_executor]
+  L3 --> L3b[execution_engine]
+  L3 --> L3c[executor implementations]
+  L3 --> L3d[binder]
+  L3 --> L3e[optimizer]
+  L3 --> L3f[catalog]
+  L3 --> L3g[type system]
+
+  L4[Lab 4\nConcurrency Control] --> L4a[lock_manager]
+  L4 --> L4b[transaction_manager]
+  L4 --> L4c[transaction / lock state]
+  L4 --> L4d[row-level 2PL]
+
+  L1 -. builds on .-> L2
+  L2 -. used by .-> L3
+  L4 -. coordinates with .-> L3
+```
+
 ## Labs
 
 | Lab | Topic | Key Concepts | Components |

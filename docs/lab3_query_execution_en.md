@@ -169,6 +169,32 @@ Project each row from the child executor by evaluating a list of projection expr
 
 Use the B+ tree index to scan rows that match the conditions.
 
+## 3.1 Student Implementation Scope
+
+Students are expected to implement the execution layer mainly in:
+
+- `src/execution/executors/seq_scan_executor.cpp`
+- `src/execution/executors/index_scan_executor.cpp`
+- `src/execution/executors/insert_executor.cpp`
+- `src/execution/executors/delete_executor.cpp`
+- `src/execution/executors/update_executor.cpp`
+- `src/execution/executors/nested_loop_join_executor.cpp`
+- `src/execution/executors/hash_join_executor.cpp`
+- `src/execution/executors/aggregation_executor.cpp`
+- `src/execution/executors/sort_executor.cpp`
+- `src/execution/executors/limit_executor.cpp`
+- `src/execution/executors/projection_executor.cpp`
+- `src/execution/executors/executor_factory.cpp` for registering plan-to-executor dispatch.
+
+For each executor, students should at least complete `Init()` and `Next()`, and add executor-local state to the corresponding headers when necessary.
+
+The expected outcome of Lab 3 is that students can:
+
+- follow the Volcano iterator model correctly,
+- distinguish streaming executors from materializing executors,
+- evaluate predicates and expressions against the correct schema,
+- keep DML row counts, tuple output, and join/aggregation semantics consistent with the plan tree.
+
 ## 4. Implementation Notes
 
 - Follow the Volcano model strictly: `Init()` prepares state, `Next()` returns one tuple at a time unless the operator is explicitly materializing.

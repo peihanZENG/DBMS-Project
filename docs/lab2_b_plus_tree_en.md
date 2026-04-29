@@ -157,6 +157,26 @@ The B+ Tree is a template class `BPlusTree<KeyType, ValueType, KeyComparator>`. 
 
 > **Note:** The current iterator design does not include a `BufferPoolManager*` member, which means the iterator cannot fetch pages through BPM. If you need to traverse across leaf nodes, you will need to modify the iterator header file to add the necessary member variables.
 
+## 3.1 Student Implementation Scope
+
+Students are expected to complete the B+ tree implementation in these files:
+
+- `src/storage/page/b_plus_tree_internal_page.cpp`
+  Complete page-local operations such as lookup, insert/remove inside the page, split helpers, and redistribution helpers.
+- `src/storage/page/b_plus_tree_leaf_page.cpp`
+  Complete ordered insert/remove, exact lookup, split helpers, merge helpers, and leaf-to-leaf movement.
+- `src/storage/index/b_plus_tree.cpp`
+  Complete `Insert`, `Remove`, `GetValue`, `Begin()`, and `Begin(key)`, including root creation, split propagation, merge/redistribution, and root adjustment.
+- `src/storage/index/b_plus_tree_iterator.cpp`
+  Complete iterator dereference and increment so leaf pages can be scanned in key order.
+
+The expected outcome of Lab 2 is that students can:
+
+- maintain sorted keys inside internal and leaf pages,
+- preserve parent pointers and the leaf linked list during structural changes,
+- handle root split and root shrink correctly,
+- support point lookup, insert/delete rebalancing, and sequential iteration.
+
 ## 4. Implementation Notes
 
 - Keep the node header fields, sizes, and parent links consistent whenever a page changes.

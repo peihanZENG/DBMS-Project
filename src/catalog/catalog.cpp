@@ -56,6 +56,16 @@ auto Catalog::CreateIndex(const std::string &index_name, const std::string &tabl
   auto index_oid = next_index_oid_++;
   auto index_info = std::make_unique<IndexInfo>(
       std::move(key_schema), index_name, table_name, index_oid, key_attrs);
+  if (key_attrs.size() == 1 &&
+      table_info->schema_.GetColumn(key_attrs.front()).GetType() == TypeId::INTEGER) {
+    index_info->supports_point_lookup_ = true;
+    for (auto it = table_info->table_->Begin(); it != table_info->table_->End(); ++it) {
+      Tuple tuple = *it;
+      RID rid = it.GetRID();
+      int32_t key = tuple.GetValue(&table_info->schema_, key_attrs.front()).GetAsInteger();
+      index_info->InsertEntry(key, rid);
+    }
+  }
   auto *raw = index_info.get();
   indexes_[index_oid] = std::move(index_info);
   index_names_[table_name][index_name] = index_oid;
@@ -82,6 +92,14 @@ auto Catalog::GetIndex(const std::string &index_name, const std::string &table_n
   auto idx_it = table_it->second.find(index_name);
   if (idx_it == table_it->second.end()) { return nullptr; }
   return indexes_.at(idx_it->second).get();
+}
+
+auto Catalog::GetIndex(index_oid_t oid) const -> IndexInfo * {
+  auto it = indexes_.find(oid);
+  if (it == indexes_.end()) {
+    return nullptr;
+  }
+  return it->second.get();
 }
 
 auto Catalog::GetTableIndexes(const std::string &table_name) const -> std::vector<IndexInfo *> {

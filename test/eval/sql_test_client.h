@@ -87,7 +87,7 @@ class SqlTestClient {
   }
 
   auto OptimizeQuery(const AbstractPlanNodeRef &plan) -> AbstractPlanNodeRef {
-    Optimizer optimizer;
+    Optimizer optimizer(GetCatalog());
     return optimizer.Optimize(plan);
   }
 

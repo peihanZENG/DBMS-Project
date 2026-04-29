@@ -6,7 +6,7 @@ include(GoogleTest)
 macro(onebase_add_test TEST_NAME TEST_SOURCE)
   add_executable(${TEST_NAME} ${TEST_SOURCE})
   target_link_libraries(${TEST_NAME} PRIVATE onebase GTest::gtest_main)
-  gtest_discover_tests(${TEST_NAME})
+  gtest_discover_tests(${TEST_NAME} DISCOVERY_MODE PRE_TEST)
 endmacro()
 
 # Type tests
@@ -35,9 +35,9 @@ onebase_add_test(lock_manager_test concurrency/lock_manager_test.cpp)
 # ──────────────────────────────────────────────
 macro(onebase_eval_test TEST_NAME TEST_SOURCE)
   add_executable(${TEST_NAME} ${TEST_SOURCE} eval/eval_main.cpp)
-  target_link_libraries(${TEST_NAME} PRIVATE onebase GTest::gtest)
+  target_link_libraries(${TEST_NAME} PRIVATE onebase onebase_server_lib GTest::gtest)
   target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-  gtest_discover_tests(${TEST_NAME} TEST_PREFIX "${TEST_NAME}.")
+  gtest_discover_tests(${TEST_NAME} TEST_PREFIX "${TEST_NAME}." DISCOVERY_MODE PRE_TEST)
 endmacro()
 
 onebase_eval_test(lab1_eval_test eval/lab1_eval_test.cpp)

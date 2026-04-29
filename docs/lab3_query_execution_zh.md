@@ -169,6 +169,32 @@ Tuple updated(std::move(new_values));
 
 使用 B+ 树索引扫描符合条件的行。
 
+## 3.1 学生实现范围
+
+学生应主要在以下执行层文件中完成实现：
+
+- `src/execution/executors/seq_scan_executor.cpp`
+- `src/execution/executors/index_scan_executor.cpp`
+- `src/execution/executors/insert_executor.cpp`
+- `src/execution/executors/delete_executor.cpp`
+- `src/execution/executors/update_executor.cpp`
+- `src/execution/executors/nested_loop_join_executor.cpp`
+- `src/execution/executors/hash_join_executor.cpp`
+- `src/execution/executors/aggregation_executor.cpp`
+- `src/execution/executors/sort_executor.cpp`
+- `src/execution/executors/limit_executor.cpp`
+- `src/execution/executors/projection_executor.cpp`
+- `src/execution/executors/executor_factory.cpp`，用于注册 `PlanType -> Executor` 的分发逻辑。
+
+对于每个执行器，学生至少需要完成 `Init()` 和 `Next()`；如果需要保存中间状态，还应同步修改对应头文件。
+
+Lab 3 完成后，学生应能够：
+
+- 正确遵循 Volcano 迭代器模型，
+- 区分流式执行器和物化执行器，
+- 使用正确的 schema 进行谓词和表达式求值，
+- 保证 DML 行数、输出 tuple 以及 join / aggregation 语义与计划树一致。
+
 ## 4. 实现说明
 
 - 严格遵守 Volcano 模型：`Init()` 负责初始化状态，`Next()` 按需返回一行，除非算子明确需要先物化。
