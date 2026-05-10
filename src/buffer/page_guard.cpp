@@ -16,6 +16,17 @@ BasicPageGuard::BasicPageGuard(BasicPageGuard &&that) noexcept
 
 auto BasicPageGuard::operator=(BasicPageGuard &&that) -> BasicPageGuard & {
   // TODO(student): Implement move assignment
+  if (this!=&that){
+    Drop();
+    this->bpm_=that.bpm_;
+    this->page_=that.page_;
+    this->is_dirty_=that.is_dirty_;
+
+    that.bpm_=nullptr;
+    that.page_=nullptr;
+    that.is_dirty_=false;
+  }
+  return *this;
   // - Drop current page if held, then take ownership of `that`
   throw NotImplementedException("BasicPageGuard::operator=(BasicPageGuard&&)");
 }
@@ -38,6 +49,11 @@ void BasicPageGuard::Drop() {
   if (page_ == nullptr) { return; }
   // TODO(student): Unpin the page via BPM and reset state
   // - Call bpm_->UnpinPage(page_id, is_dirty_) if page_ is not null
+  bpm_->UnpinPage(page_->GetPageId(),is_dirty_);
+  bpm_=nullptr;
+  page_=nullptr;
+  is_dirty_=false;
+  return;
   // - Set bpm_ and page_ to nullptr
   throw NotImplementedException("BasicPageGuard::Drop");
 }
@@ -57,6 +73,14 @@ ReadPageGuard::ReadPageGuard(ReadPageGuard &&that) noexcept
 
 auto ReadPageGuard::operator=(ReadPageGuard &&that) -> ReadPageGuard & {
   // TODO(student): Implement move assignment (drop current, take that)
+  if (this!=&that){
+    Drop();
+    this->bpm_=that.bpm_;
+    this->page_=that.page_;
+    that.bpm_=nullptr;
+    that.page_=nullptr;
+  }
+  return *this;
   throw NotImplementedException("ReadPageGuard::operator=(ReadPageGuard&&)");
 }
 
@@ -71,6 +95,11 @@ auto ReadPageGuard::GetData() const -> const char * { return page_->GetData(); }
 void ReadPageGuard::Drop() {
   if (page_ == nullptr) { return; }
   // TODO(student): Release read latch, unpin page, reset state
+  page_->RUnlatch();
+  bpm_->UnpinPage(page_->GetPageId(),false);
+  this->bpm_=nullptr;
+  this->page_=nullptr;
+  return;
   throw NotImplementedException("ReadPageGuard::Drop");
 }
 
@@ -89,6 +118,15 @@ WritePageGuard::WritePageGuard(WritePageGuard &&that) noexcept
 
 auto WritePageGuard::operator=(WritePageGuard &&that) -> WritePageGuard & {
   // TODO(student): Implement move assignment (drop current, take that)
+  if (this!=&that){
+    Drop();
+    this->bpm_=that.bpm_;
+    this->page_=that.page_;
+
+    that.page_=nullptr;
+    that.bpm_=nullptr;
+  }
+  return *this;
   throw NotImplementedException("WritePageGuard::operator=(WritePageGuard&&)");
 }
 
@@ -104,6 +142,12 @@ auto WritePageGuard::GetDataMut() -> char * { return page_->GetData(); }
 void WritePageGuard::Drop() {
   if (page_ == nullptr) { return; }
   // TODO(student): Release write latch, unpin page (dirty=true), reset state
+  page_->WUnlatch();
+  bpm_->UnpinPage(this->GetPageId(),true);
+
+  bpm_=nullptr;
+  page_=nullptr;
+  return;
   throw NotImplementedException("WritePageGuard::Drop");
 }
 
